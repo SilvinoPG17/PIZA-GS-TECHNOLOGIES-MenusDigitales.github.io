@@ -13,15 +13,20 @@
 
         // URL base de tu API .NET (asegúrate de que coincida con tu puerto actual)
         const API_BASE = 'https://menusqr-febmaxevauewa3e5.mexicocentral-01.azurewebsites.net/api/menus';
+        //  const API_BASE = 'https://localhost:7095/api/menus';
 
         // 1. EVENTO: NUEVO REGISTRO (Conecta con POST /api/menus/subir)
         document.getElementById('formNuevo').addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            const nombreNegocio = document.getElementById('nombreNegocioNuevo').value;
+
             const formData = new FormData();
             formData.append('archivoPdf', document.getElementById('pdfFileNuevo').files[0]);
-            formData.append('nombreNegocio', document.getElementById('nombreNegocioNuevo').value);
+            formData.append('nombreNegocio', nombreNegocio);
 
-            await enviarPeticion(`${API_BASE}/subir`, formData, document.getElementById('btnNuevo'));
+            await enviarPeticion(`${API_BASE}/subir`, formData, document.getElementById('btnNuevo'), nombreNegocio);
+            
         });
 
         // 2. EVENTO: ACTUALIZAR QR (Conecta con POST /api/menus/actualizar)
@@ -81,6 +86,9 @@
             document.getElementById('pdfLink').href = urlPdf;
             document.getElementById('pdfLink').innerText = urlPdf;
 
+            // Llamamos a la función simple para configurar el botón de descarga
+            configurarBotonDescarga(qrBase64, nombreNegocio);
+
             // Mostramos el contenedor de resultados y subimos la vista hacia él
             document.getElementById('resultado').style.display = 'block';
             document.getElementById('resultado').scrollIntoView({ behavior: 'smooth' });
@@ -100,7 +108,7 @@
         }
 
         // Función centralizada para enviar peticiones a la API
-        async function enviarPeticion(url, formData, boton) {
+        async function enviarPeticion(url, formData, boton, nombrePersonalizado = null) {
             const textoOriginal = boton.innerText;
             boton.innerText = "Procesando...";
             boton.disabled = true;
@@ -122,6 +130,15 @@
                 document.getElementById('downloadQrBtn').href = data.qrCodeBase64;
                 document.getElementById('pdfLink').href = data.urlPdf;
                 document.getElementById('pdfLink').innerText = data.urlPdf;
+
+                let nombreParaArchivo = nombrePersonalizado;
+                if (!nombreParaArchivo) {
+                    // Si no viene explícito, lo intentamos leer de los inputs de la interfaz
+                    const inputActivo = document.getElementById('nombreNegocioExistente') || document.getElementById('nombreNegocioNuevo');
+                    nombreParaArchivo = inputActivo ? inputActivo.value : "Menu_Digital";
+                }
+
+                configurarBotonDescarga(data.qrCodeBase64, nombreParaArchivo);
 
                 document.getElementById('resultado').style.display = 'block';
                 
@@ -150,6 +167,18 @@
                 }
             }
         });
+
+// Función simple para descargar el QR manteniendo el nombre del negocio en el archivo
+function configurarBotonDescarga(qrBase64, nombreNegocio) {
+    const btnDescargar = document.getElementById('downloadQrBtn');
+    
+    // Limpiar el nombre para que sea válido como nombre de archivo (ej. "Tacos El Paisa" -> "Tacos_El_Paisa")
+    const nombreLimpio = (nombreNegocio || "Menu_Digital").replace(/[^a-zA-Z0-9_-]/g, "_");
+    
+    // Asignar la imagen en Base64 y el nombre personalizado al atributo download
+    btnDescargar.href = qrBase64;
+    btnDescargar.download = `QR_${nombreLimpio}.png`;
+}
 
         // 2. Función para cerrar sesión limpiamente
         function cerrarSesion() {
