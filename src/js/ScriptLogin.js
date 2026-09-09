@@ -1,4 +1,4 @@
-const API_URL = 'https://menusqr-febmaxevaueva3e5.mexicentral-01.azurewebsites.net/api/usuarios/login';
+const API_URL = 'https://localhost:7095/api/usuarios/login';
 
         document.getElementById('formLogin').addEventListener('submit', async (e) => {
             e.preventDefault();
