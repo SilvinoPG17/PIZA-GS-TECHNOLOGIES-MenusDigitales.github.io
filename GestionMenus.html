@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Menús Digitales y QR</title>
+    <link rel="stylesheet" href="src/css/styleMenu.css">
+    <script src="src/js/scriptMenu.js" defer></script>
+</head>
+<body>
+<script>
+    // Verificar si hay sesión activa al cargar el panel de gestión
+const usuarioActivo = localStorage.getItem('usuarioLogueado');
+if (!usuarioActivo) {
+    alert("Acceso denegado. Por favor inicia sesión primero.");
+    window.location.href = 'index.html'; // Te manda al login si no estás logueado
+}
+</script>
+    <div class="main-wrapper">
+        <!-- Barra de Navegación Superior -->
+        <div class="navbar">
+            <div class="navbar-brand">Panel de Control - Menús QR</div>
+            <div class="navbar-user-info">
+                <span id="saludoUsuario">Hola, Usuario</span>
+                <button class="btn-logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+            </div>
+        </div>
+
+        <!-- Tarjeta Principal de Contenido -->
+        <div class="container">
+        <h2>Gestión de Menús QR</h2>
+        
+        <!-- Pestañas de Navegación -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="cambiarVista('nuevo')">Nuevo Registro</button>
+            <button class="tab-btn" onclick="cambiarVista('existente')">Negocios Registrados / Actualizar</button>
+        </div>
+
+        <!-- VISTA 1: NUEVO REGISTRO -->
+        <div id="seccionNuevo" class="form-section active">
+            <h3>Registrar Nuevo Menú</h3>
+            <form id="formNuevo">
+                <div class="form-group">
+                    <label>Nombre del Negocio:</label>
+                    <input type="text" id="nombreNegocioNuevo" placeholder="Ej. Restaurante Sabor Latino" required>
+                </div>
+                <div class="form-group">
+                    <label>Archivo PDF del Menú:</label>
+                    <input type="file" id="pdfFileNuevo" accept="application/pdf" required>
+                </div>
+                <button type="submit" class="btn-submit btn-verde" id="btnNuevo">Generar y Guardar Menú</button>
+            </form>
+        </div>
+
+        <!-- VISTA 2: NEGOCIOS EXISTENTES / ACTUALIZAR -->
+        <div id="seccionExistente" class="form-section">
+            <h3>Listado de Negocios y Actualización de QR</h3>
+            <p style="font-size: 13px; color: #666;">Selecciona un negocio de la tabla para habilitar su edición y actualizar su código QR con un nuevo PDF.</p>
+            
+            <form id="formExistente">
+                <div class="form-group">
+                    <label>ID del Negocio:</label>
+                    <input type="number" id="idNegocioExistente" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Nombre del Negocio:</label>
+                    <input type="text" id="nombreNegocioExistente" disabled required>
+                </div>
+                <div class="form-group">
+                    <label>Nuevo Archivo PDF (Para actualizar QR):</label>
+                    <input type="file" id="pdfFileExistente" accept="application/pdf" disabled required>
+                </div>
+                <button type="submit" class="btn-submit" id="btnActualizar" disabled>Actualizar QR en BD</button>
+            </form>
+
+            <!-- Tabla de Listado -->
+            <div id="seccionListado">
+                <h4>Negocios Registrados</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Negocio</th>
+                            <th>Fecha</th>
+                            <th>Nombre Archivo Original</th>
+                            <th>Nombre Archivo Servidor</th>
+                            <th>UrlPdf</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaMenusBody">
+                        <!-- Se rellena automáticamente con JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECCIÓN DE RESULTADO COMÚN -->
+        <div id="resultado" class="resultado">
+            <h3 style="color: #4CAF50;">¡Éxito!</h3>
+            <p id="mensajeEstado"></p>
+            <img id="qrImage" class="qrImage" src="" alt="Código QR">
+            <div>
+                <a id="downloadQrBtn" class="btn-descargar" download="CodigoQR-Menu.png">Descargar Imagen QR</a>
+            </div>
+            <p style="margin-top: 15px; font-size: 14px;">
+                Enlace directo: <a id="pdfLink" href="#" target="_blank">Ver Menú online</a>
+            </p>
+        </div>
+    </div>
+    </div>
+</body>
+</html>

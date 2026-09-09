@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Gestión de Menús</title>
+    <link rel="stylesheet" href="src/css/StyleLogin.css">
+    <script src="src/js/scriptLogin.js" defer></script>
+</head>
+<body>
+    <div class="login-card">
+        <h2>Iniciar Sesión</h2>
+        <form id="formLogin">
+            <div class="form-group">
+                <label>Correo Electrónico:</label>
+                <input type="email" id="correo" placeholder="correo@ejemplo.com" required>
+            </div>
+            <div class="form-group">
+                <label>Contraseña:</label>
+                <input type="password" id="passWord" placeholder="********" required>
+            </div>
+            <button type="submit" id="btnLogin">Entrar al Sistema</button>
+        </form>
+        <p id="errorMsg" class="error-msg"></p>
+    </div>
+</body>
+</html>
