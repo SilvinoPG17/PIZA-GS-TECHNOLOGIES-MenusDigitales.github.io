@@ -12,7 +12,7 @@
         }
 
         // URL base de tu API .NET (asegúrate de que coincida con tu puerto actual)
-        const API_BASE = 'https://localhost:7095/api/menus';
+        const API_BASE = 'https://menusqr-febmaxevauewa3e5.mexicocentral-01.azurewebsites.net/api/menus';
 
         // 1. EVENTO: NUEVO REGISTRO (Conecta con POST /api/menus/subir)
         document.getElementById('formNuevo').addEventListener('submit', async (e) => {
