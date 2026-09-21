@@ -121,10 +121,11 @@
                 console.log("Respuesta recibida del servidor (Status " + response.status + "):", data);
 
                 // Si el servidor devolvió un error (ej. 400 Bad Request por no ser PDF)
-                if (!response.ok) {
-                    const mensajeDetallado = data?.error || data?.mensaje || data?.inner || `Error HTTP ${response.status} en el servidor.`;
-                    throw new Error(mensajeDetallado);
-                }
+                if (!data.exito && data.mensaje) {
+    alert("Atención desde Backend: " + data.mensaje);
+    console.error("Detalle completo:", data.detalle);
+    return;
+}
                 
                 // Pintar los resultados exitosos devueltos por el backend
                 document.getElementById('mensajeEstado').innerText = data.mensaje;
