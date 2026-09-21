@@ -1,4 +1,4 @@
-const API_URL = 'http://pizagst-001-site1.itempurl.com/api/usuarios/login';
+const API_URL = 'https://pizagst-001-site1.itempurl.com/api/usuarios/login';
 
         document.getElementById('formLogin').addEventListener('submit', async (e) => {
             e.preventDefault();

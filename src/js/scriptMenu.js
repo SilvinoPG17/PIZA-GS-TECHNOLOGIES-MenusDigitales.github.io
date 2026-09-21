@@ -12,7 +12,7 @@
         }
 
         // URL base de tu API .NET (asegúrate de que coincida con tu puerto actual)
-        const API_BASE = 'http://pizagst-001-site1.itempurl.com/api/menus';
+        const API_BASE = 'https://pizagst-001-site1.itempurl.com/api/menus';
 
         // 1. EVENTO: NUEVO REGISTRO (Conecta con POST /api/menus/subir)
         document.getElementById('formNuevo').addEventListener('submit', async (e) => {
