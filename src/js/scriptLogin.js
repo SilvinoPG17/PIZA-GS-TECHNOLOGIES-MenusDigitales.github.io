@@ -1,6 +1,4 @@
-const API_URL = 'https://menusqr-febmaxevauewa3e5.mexicocentral-01.azurewebsites.net/api/usuarios/login';
-
-// const API_URL = 'https://localhost:7095/api/usuarios/login';
+const API_URL = 'http://pizagst-001-site1.itempurl.com/api/usuarios/login';
 
         document.getElementById('formLogin').addEventListener('submit', async (e) => {
             e.preventDefault();
