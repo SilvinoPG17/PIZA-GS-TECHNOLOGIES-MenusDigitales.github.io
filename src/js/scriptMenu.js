@@ -118,9 +118,12 @@
                 // Intentamos parsear la respuesta a JSON (funciona tanto para éxito como para errores controlados de .NET)
                 const data = await response.json();
 
+                console.log("Respuesta recibida del servidor (Status " + response.status + "):", data);
+
                 // Si el servidor devolvió un error (ej. 400 Bad Request por no ser PDF)
                 if (!response.ok) {
-                    throw new Error(data.mensaje || 'Ocurrió un error en el servidor.');
+                    const mensajeDetallado = data?.error || data?.mensaje || data?.inner || `Error HTTP ${response.status} en el servidor.`;
+                    throw new Error(mensajeDetallado);
                 }
                 
                 // Pintar los resultados exitosos devueltos por el backend
@@ -147,6 +150,7 @@
             } catch (error) {
                 // Aquí se atrapa el mensaje exacto enviado por .NET (ej. "El archivo debe ser un formato PDF válido.")
                 alert("Aviso: " + error.message);
+                console.error("Detalle completo del error capturado:", error);
             } finally {
                 boton.innerText = textoOriginal;
                 boton.disabled = false;
