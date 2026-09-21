@@ -10,7 +10,6 @@ const API_URL = 'https://pizagst-001-site1.itempurl.com/api/usuarios/login';
                 correo: document.getElementById('correo').value,
                 passWord: document.getElementById('passWord').value
             };
-
             btn.innerText = "Verificando...";
             btn.disabled = true;
 
@@ -26,7 +25,6 @@ const API_URL = 'https://pizagst-001-site1.itempurl.com/api/usuarios/login';
                 if (!response.ok) {
                     throw new Error(data.mensaje || 'Error al iniciar sesión.');
                 }
-
                 // Guardamos la sesión en el navegador
                 localStorage.setItem('usuarioLogueado', JSON.stringify(data.usuario));
 
