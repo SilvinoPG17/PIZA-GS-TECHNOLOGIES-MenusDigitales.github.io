@@ -107,56 +107,62 @@
         }
 
         // Función centralizada para enviar peticiones a la API
-        async function enviarPeticion(url, formData, boton, nombrePersonalizado = null) {
-            const textoOriginal = boton.innerText;
-            boton.innerText = "Procesando...";
-            boton.disabled = true;
+        // Función centralizada para enviar peticiones a la API
+async function enviarPeticion(url, formData, boton, nombrePersonalizado = null) {
+    const textoOriginal = boton.innerText;
+    boton.innerText = "Procesando...";
+    boton.disabled = true;
 
-            try {
-                const response = await fetch(url, { method: 'POST', body: formData });
-                
-                // Intentamos parsear la respuesta a JSON (funciona tanto para éxito como para errores controlados de .NET)
-                const data = await response.json();
+    try {
+        const response = await fetch(url, { method: 'POST', body: formData });
+        
+        // Leemos la respuesta del servidor
+        const data = await response.json().catch(() => null);
 
-                console.log("Respuesta recibida del servidor (Status " + response.status + "):", data);
-
-                // Si el servidor devolvió un error (ej. 400 Bad Request por no ser PDF)
-                if (!data.exito && data.mensaje) {
-    alert("Atención desde Backend: " + data.mensaje);
-    console.error("Detalle completo:", data.detalle);
-    return;
-}
-                
-                // Pintar los resultados exitosos devueltos por el backend
-                document.getElementById('mensajeEstado').innerText = data.mensaje;
-                document.getElementById('qrImage').src = data.qrCodeBase64;
-                document.getElementById('downloadQrBtn').href = data.qrCodeBase64;
-                document.getElementById('pdfLink').href = data.urlPdf;
-                document.getElementById('pdfLink').innerText = data.urlPdf;
-
-                let nombreParaArchivo = nombrePersonalizado;
-                if (!nombreParaArchivo) {
-                    // Si no viene explícito, lo intentamos leer de los inputs de la interfaz
-                    const inputActivo = document.getElementById('nombreNegocioExistente') || document.getElementById('nombreNegocioNuevo');
-                    nombreParaArchivo = inputActivo ? inputActivo.value : "Menu_Digital";
-                }
-
-                configurarBotonDescarga(data.qrCodeBase64, nombreParaArchivo);
-
-                document.getElementById('resultado').style.display = 'block';
-                
-                if (url.includes('actualizar')) {
-                    cargarListadoNegocios(); // Refrescar tabla si fue actualización
-                }
-            } catch (error) {
-                // Aquí se atrapa el mensaje exacto enviado por .NET (ej. "El archivo debe ser un formato PDF válido.")
-                alert("Aviso: " + error.message);
-                console.error("Detalle completo del error capturado:", error);
-            } finally {
-                boton.innerText = textoOriginal;
-                boton.disabled = false;
-            }
+        // Validar si la petición falló a nivel HTTP o trajo la propiedad exito: false
+        if (!response.ok || (data && data.exito === false)) {
+            const mensajeError = data?.mensaje || data?.error || 'Ocurrió un error al procesar el menú.';
+            throw new Error(mensajeError);
         }
+
+        if (!data) {
+            throw new Error("El servidor respondió sin datos.");
+        }
+
+        // PINTAR RESULTADOS: Asignar imagen QR, enlace PDF y mensaje
+        document.getElementById('mensajeEstado').innerText = data.mensaje || "¡Menú registrado con éxito!";
+        document.getElementById('qrImage').src = data.qrCodeBase64;
+        document.getElementById('downloadQrBtn').href = data.qrCodeBase64;
+        document.getElementById('pdfLink').href = data.urlPdf;
+        document.getElementById('pdfLink').innerText = data.urlPdf;
+
+        let nombreParaArchivo = nombrePersonalizado;
+        if (!nombreParaArchivo) {
+            const inputActivo = document.getElementById('nombreNegocioExistente') || document.getElementById('nombreNegocioNuevo');
+            nombreParaArchivo = inputActivo ? inputActivo.value : "Menu_Digital";
+        }
+
+        // Configurar la descarga del código QR
+        configurarBotonDescarga(data.qrCodeBase64, nombreParaArchivo);
+
+        // DESPLEGAR EL CONTENEDOR DE RESULTADOS Y DESPLAZAR PANTALLA
+        const contenedorResultado = document.getElementById('resultado');
+        contenedorResultado.style.display = 'block';
+        contenedorResultado.scrollIntoView({ behavior: 'smooth' });
+
+        // Refrescar tabla de la pestaña si fue actualización
+        if (url.includes('actualizar')) {
+            cargarListadoNegocios();
+        }
+
+    } catch (error) {
+        alert("Aviso: " + error.message);
+        console.error("Error al procesar la petición:", error);
+    } finally {
+        boton.innerText = textoOriginal;
+        boton.disabled = false;
+    }
+}
 
         // 1. Al cargar la página, inyectamos el nombre del usuario logueado
         document.addEventListener('DOMContentLoaded', () => {
